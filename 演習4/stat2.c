@@ -1,6 +1,5 @@
 /*オンライン型*/
-/*    tm[n] = atoi(strtok(buf, ","));
-    amp[n] = atoi(strtok(NULL, "\r\n\0"));*/
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,10 +8,10 @@
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
 #define DATANUM 101                     /* 読込データ個数 */
 int main(int argc, char **argv) {
-  int nmax, column = 2, ncolumn, add_square, add_effective;
+  int column = 2, ncolumn, add_square, a_rms_add;
   int add_n = 0, max, min, n = 0, keep_n;
-  int tm[DATANUM], amp[DATANUM], aout[DATANUM];
-  double average, standard_deviation, max_amplitude, effective;
+  int tm[DATANUM], amp[DATANUM];
+  double average, standard_deviation, max_amplitude, a_rms;
   char buf[BUFSIZE];
   FILE *fp;
 
@@ -43,15 +42,17 @@ int main(int argc, char **argv) {
     }
 
     n++;
-    keep_n = n;
-
-    add_n = amp[n];                //合計値初期化
-    max = amp[n];                  //最大値初期化
-    min = amp[n];                  //最小値初期化
-    add_square = amp[n] * amp[n];  // Xi^2を加算しまくる
-
-    n--;  //加算数カウント
   }
+  keep_n = n;
+  n--;
+  add_n = amp[n];                //合計値初期化
+  max = amp[n];                  //最大値初期化
+  min = amp[n];                  //最小値初期化
+  add_square = amp[n] * amp[n];  // Xi^2を加算しまくる
+  a_rms_add = (amp[n] - A_BIAS) * (amp[n] - A_BIAS);  //実効値求めるための加算
+
+  n--;  //加算数カウント
+
   for (; n >= 0; n--) {
     add_n += amp[n];  //平均を求めるための合計値
     if (max < amp[n]) {
@@ -60,26 +61,29 @@ int main(int argc, char **argv) {
 
     if (min > amp[n]) {
       min = amp[n];
-    }  //最小値更新
-
-    add_effective = (amp[n] - A_BIAS) * (amp[n] - A_BIAS);
-
+    }                               //最小値更新
     add_square += amp[n] * amp[n];  //二条めっちゃ足す
+    a_rms_add +=
+        (amp[n] - A_BIAS) * (amp[n] - A_BIAS);  //実効値求めるための加算
   }
+
   average = (double)add_n / keep_n;  //平均値計算
+
   standard_deviation =
       sqrt(add_square / keep_n - average * average);  //標準偏差の計算
+
   max_amplitude = A_BIAS - min;
   if (max - A_BIAS > A_BIAS - min) {
     max_amplitude = max - A_BIAS;  //最大振幅
   }
-  effective = max_amplitude / sqrt(2);  //実効値
+
+  a_rms = sqrt(a_rms_add / keep_n);  //実効値
 
   printf(
       "最小値  :%d\n最大値  :%d\n平均値  "
       ":%.4f\n標準偏差:%.4f\n最大振幅:%.4f\n実効値  :"
       "%.4f\n",
-      min, max, average, standard_deviation, max_amplitude, effective);
+      min, max, average, standard_deviation, max_amplitude, a_rms);
   //各値の出力
   fclose(fp); /* ファイルを閉じる */
   return EXIT_SUCCESS;
