@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "pi.h"
+
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
 #define DT 10                           /* 標本化間隔[ms] */
 #define T_END 1000                      /* 計測終了時刻[ms] */
