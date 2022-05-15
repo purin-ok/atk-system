@@ -14,6 +14,7 @@
 #define CHANNEL_N 1
 #define BLOCK_SIZE 1
 #define Q_BIT 8
+#define WAVE_SECOND 1
 
 void header_data(FILE *fp) {
   int riff_size = RIFF_SIZE;
@@ -24,6 +25,7 @@ void header_data(FILE *fp) {
   int block_size = BLOCK_SIZE;
   int q_bit = Q_BIT;
   int data_speed = sampling_rate * block_size;
+  int data_size = sampling_rate * WAVE_SECOND;
 
   fwrite("RIFF", sizeof(char), 4, fp);
   fwrite(&riff_size, sizeof(int), 1, fp);
@@ -37,7 +39,7 @@ void header_data(FILE *fp) {
   fwrite(&block_size, sizeof(short), 1, fp);
   fwrite(&q_bit, sizeof(short), 1, fp);
   fwrite("data", sizeof(char), 4, fp);
-  fwrite(&sampling_rate, sizeof(int), 1, fp);
+  fwrite(&data_size, sizeof(int), 1, fp);
 }
 
 int main(int argc, char **argv) {
