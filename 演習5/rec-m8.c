@@ -23,6 +23,7 @@ void header_data(FILE *fp) {
   int sampling_rate = SAMPLING_RATE;
   int block_size = BLOCK_SIZE;
   int q_bit = Q_BIT;
+  int data_speed = sampling_rate * block_size;
 
   fwrite("RIFF", sizeof(char), 4, fp);
   fwrite(&riff_size, sizeof(int), 1, fp);
@@ -32,7 +33,7 @@ void header_data(FILE *fp) {
   fwrite(&format_id, sizeof(short), 1, fp);
   fwrite(&channel_n, sizeof(short), 1, fp);
   fwrite(&sampling_rate, sizeof(int), 1, fp);
-  fwrite(&sampling_rate, sizeof(int), 1, fp);
+  fwrite(&data_speed, sizeof(int), 1, fp);
   fwrite(&block_size, sizeof(short), 1, fp);
   fwrite(&q_bit, sizeof(short), 1, fp);
   fwrite("data", sizeof(char), 4, fp);
