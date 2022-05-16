@@ -15,6 +15,7 @@
 #define BLOCK_SIZE 1
 #define Q_BIT 8
 #define WAVE_SECOND 1
+int data_size = SAMPLING_RATE * WAVE_SECOND;
 
 void header_data(FILE *fp) {
   int riff_size = RIFF_SIZE;
@@ -25,7 +26,6 @@ void header_data(FILE *fp) {
   int block_size = BLOCK_SIZE;
   int q_bit = Q_BIT;
   int data_speed = sampling_rate * block_size;
-  int data_size = sampling_rate * WAVE_SECOND;
 
   fwrite("RIFF", sizeof(char), 4, fp);
   fwrite(&riff_size, sizeof(int), 1, fp);
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
   amp = atof(argv[1]);
   frq = atof(argv[2]);
 
-  for (t = 0; t <= SAMPLING_RATE; t++) {
+  for (t = 0; t <= data_size; t++) {
     rad = t / (1000 / frq) * 2 * PI;
     vin = amp * sin(rad) + BIAS; /* 標本化 */
     if (vin < 0) vin = 0;
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
   }
 
   header_data(fp);
-  fwrite(vout, sizeof(int), SAMPLING_RATE, fp);
+  fwrite(vout, sizeof(int), data_size, fp);
   fclose(fp);
   return EXIT_SUCCESS;
 }
