@@ -37,9 +37,9 @@ int main(int argc, char **argv) {
       continue;
     }
     tm[n] = atoi(strtok(buf, ","));
-    for (ncolumn = 1; ncolumn < column; ncolumn++) {
-      amp[n] = atoi(strtok(NULL, "\r\n\0"));
-    }
+    for (ncolumn = 1; ncolumn < column - 1; ncolumn++) {
+      amp[n] = atoi(strtok(NULL, ",\r\n\0"));
+    }  //たくさん列ある行は最後までって考えるなら多分こうやってやりたい所を最後までやるべき
 
     n++;
   }
