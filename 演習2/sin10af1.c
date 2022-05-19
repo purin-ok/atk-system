@@ -6,8 +6,8 @@
 #include "pi.h"
 
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
-#define DT 1 /* 標本化間隔[ms] */  //ここをどうにかしていじると2-5ができる
-#define T_END 1000                 /* 計測終了時刻[ms] */
+#define DT 251 /* 標本化間隔[ms] */  //ここをどうにかしていじると2-5ができる
+#define T_END 3000                   /* 計測終了時刻[ms] */
 
 int main(int argc, char **argv) {
   int t;
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     if (vin < 0) vin = 0;
     if (vin > 255) vin = 255;
     vout = vin; /* 量子化・符号化 */
-    printf("%4d, %4d\n", t, vout);
+    printf("%4d,  %4d\n", t, vout);
   }
   printf("#E %g\n", esum);  //演習2-4かなかな
   return EXIT_SUCCESS;
