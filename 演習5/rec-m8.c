@@ -46,15 +46,15 @@ int main(int argc, char **argv) {
   //ファイル名，振幅，振幅，書き込みファイル
   int t;
   double amp, frq, rad, vin;
-  int vout[SAMPLING_RATE];
+  unsigned char vout[SAMPLING_RATE];
 
   FILE *fp;
   if (argc < 4) {
-    printf("ちゃんと入力してね");
+    fprintf(stderr, "Usage: %s file page\n", argv[0]);
     return EXIT_FAILURE;
   }
   if ((fp = fopen(argv[3], "wb+")) == NULL) {
-    printf("ないよファイルないよ");
+    fprintf(stderr, "File (%s) cannot open\n", argv[1]);
     return EXIT_FAILURE;
   }
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
   frq = atof(argv[2]);
 
   for (t = 0; t <= data_size; t++) {
-    rad = t / (1000 / frq) * 2 * PI;
+    rad = t * (frq / SAMPLING_RATE) * 2 * PI;
     vin = amp * sin(rad) + BIAS; /* 標本化 */
     if (vin < 0) vin = 0;
     if (vin > 255) vin = 255;
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
   }
 
   header_data(fp);
-  fwrite(vout, sizeof(int), data_size, fp);
+  fwrite(vout, sizeof(unsigned char), data_size, fp);
   fclose(fp);
   return EXIT_SUCCESS;
 }
