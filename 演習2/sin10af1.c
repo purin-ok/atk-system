@@ -6,12 +6,17 @@
 #include "pi.h"
 
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
-#define DT 251 /* 標本化間隔[ms] */  //ここをどうにかしていじると2-5ができる
-#define T_END 3000                   /* 計測終了時刻[ms] */
+#define DT 10 /* 標本化間隔[ms] */  //ここをどうにかしていじると2-5ができる
+#define T_END 1000                  /* 計測終了時刻[ms] */
+
+double err_sum(double true_value, unsigned char quantization, double e_rms) {
+  e_rms = (true_value - quantization) * (true_value - quantization);
+  return e_rms;
+}
 
 int main(int argc, char **argv) {
-  int t;
-  double amp, frq, phf, rad, vin, esum = 0;
+  int t, n = 0;
+  double amp, frq, phf, rad, vin, esum = 0, e_rms = 0;
   /* esumは演習2-3,phfは演習2-6で使用 */
   unsigned char vout; /* 出力用: 8ビット符号なし[0:255] */
 
@@ -30,15 +35,21 @@ int main(int argc, char **argv) {
   printf("#B %d\n", A_BIAS);
   printf("#N %d\n", T_END / DT + 1);
 
-  for (t = 0; t <= T_END; t += DT) {
+  for (t = 0; t <= T_END; t += DT, n++) {
     rad = t / (1000 / frq) * 2 * PI;
     /* 時刻t[ms]を弧度に変換する式を考えること（式を必ず報告すること） */
     vin = amp * sin(rad) + A_BIAS; /* 標本化 */
-    if (vin < 0) vin = 0;
-    if (vin > 255) vin = 255;
+
     vout = vin; /* 量子化・符号化 */
-    printf("%4d,  %4d\n", t, vout);
+    if (vout < 0) vout = 0;
+    if (vout > 255) vout = 255;
+    e_rms = err_sum(vin, vout, e_rms);
+    printf("%4d, %4d\n", t, vout);
+    // printf("%f", e_rms);
   }
+  e_rms /= n;
+  e_rms = sqrt(e_rms);
+  printf("%f\n", e_rms);
   printf("#E %g\n", esum);  //演習2-4かなかな
   return EXIT_SUCCESS;
 }
