@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     rad = t / (1000 / frq) * 2 * PI;
     /* 時刻t[ms]を弧度に変換する式を考えること（式を必ず報告すること） */
     vin = amp * sin(rad) + A_BIAS; /* 標本化 */
-
+    vin += 0.5;
     vout = vin; /* 量子化・符号化 */
     if (vout < 0) vout = 0;
     if (vout > 255) vout = 255;

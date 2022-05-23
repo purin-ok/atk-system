@@ -16,43 +16,37 @@ double err_sum(double true_value, unsigned char quantization, double e_rms) {
 
 int main(int argc, char **argv) {
   int t, n = 0;
-  double amp, frq, phf, rad, vin, esum = 0;
+  double amp, frq, phf, rad, vin, esum = 0, dt, phase;
   /* esumは演習2-3,phfは演習2-6で使用 */
   unsigned char vout; /* 出力用: 8ビット符号なし[0:255] */
 
-  if (argc != 3) { /* コマンドライン引数の処理 */
+  if (argc != 5) { /* コマンドライン引数の処理 */
     fprintf(stderr, "Usage: %s amplitude frequency\n", argv[0]);
     return EXIT_FAILURE;
   }
 
   amp = atof(argv[1]);
   frq = atof(argv[2]);
-
+  phase = atof(argv[3]);  //単位は[ms]
+  // printf("a");
+  dt = atof(argv[4]);
+  // printf("%d", atoi(argv[4]));
   printf("#A %f\n", amp); /* サンプリング情報を出力 */
   printf("#F %f\n", frq);
   //#をつけておくとgnuplotの出力には影響しないけど、人間は見ることはできる
-  printf("#T %d\n", DT);
+  printf("#T %f\n", dt);
   printf("#B %d\n", A_BIAS);
-  printf("#N %d\n", T_END / DT + 1);
+  printf("#N %f\n", T_END / dt + 1);
 
-  for (t = 0; t <= T_END; t += DT, n++) {
-    rad = t / (1000 / frq) * 2 * PI;
-    /* 時刻t[ms]を弧度に変換する式を考えること（式を必ず報告すること） */
+  for (t = 0; t <= T_END; t += dt) {
+    rad = (t + phase) / (1000 / frq) * 2 * PI;
     vin = amp * sin(rad) + A_BIAS; /* 標本化 */
-
+    vin += 0.5;
     vout = vin; /* 量子化・符号化 */
     if (vout < 0) vout = 0;
     if (vout > 255) vout = 255;
     esum = err_sum(vin, vout, esum);
     printf("%4d, %4d\n", t, vout);
-    // printf("%f", e_rms);
   }
-  esum /= n;
-  esum = sqrt(esum);
-  printf("#E %g\n", esum);  //演習2-4かなかな
   return EXIT_SUCCESS;
 }
-//[0,255]超えたらラインの値にすりゃいいんじゃね |
-//波形が超越した．理由:vinの値がunsigned charで表せる値を飛び越えたけど，
-//無理やり表そうとしたから，modを取った形になってるのでは
-//戻り値で異常終了か正常に終わったかやるらしい
