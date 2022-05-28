@@ -6,11 +6,11 @@
 #define DATANUM 101 /* 読込データ個数 */
 #define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
-//#define TEST
+#define TEST
 #define MOVING_AVERAGE 5
 int main(int argc, char **argv) {
   int n, i;
-  int tm[DATANUM], amp[DATANUM], aout[DATANUM], editing[DATANUM - 1];
+  int tm[DATANUM], amp[DATANUM], aout[DATANUM] = {0}, editing[DATANUM - 1];
   /* 引数のチェックとargv[1]で指定されたファイルを開く処理を書くこと */
   int nmax;
   double err, err_5add = 0;
@@ -38,24 +38,26 @@ int main(int argc, char **argv) {
     n++; /* ここに n++ がある理由を考えよ */ /*コメント文字の処理を飛ばすため*/
   }
   fclose(fp);
-  for (n = 0; n < MOVING_AVERAGE / 2 + 1; n++) {
+  for (n = 0; n < MOVING_AVERAGE - 1; n++) {
     err_5add += amp[n];
-  }
-  /*err_3add = amp[0] + amp[1];
+    // printf("%d,%f\n", amp[n], err_5add);
+  }  // 0~3のデータ4つ分足している
+  /*err_3add = amp[0] + amp[1] + amp[2] + amp[3];
   実質これとやってる事同じ
   */
   for (n = MOVING_AVERAGE / 2; n < DATANUM - 1; n++) {
-    // 3つ足して3で割った値をaoutに入れる．
+    // 5つ足して5で割った値をaoutに入れる．
     err_5add += amp[n + MOVING_AVERAGE / 2];
     aout[n] = err_5add / MOVING_AVERAGE;
     err_5add -= amp[n - MOVING_AVERAGE / 2];
+    // printf("%d"
     /* ここで出力範囲が[0:255]になるようクリッピング処理すること */
     if (aout[n] < 0) aout[n] = 0;
     if (aout[n] > 255) aout[n] = 255;
   }
-  for (n = 1; n < DATANUM - 1; n++) {
+  for (n = MOVING_AVERAGE / 2; n < DATANUM - (MOVING_AVERAGE / 2); n++) {
 #if defined TEST
-    printf("%4d, %4d, %4d\n", tm, amp[n], aout[n]); /* 付録B参照 */
+    printf("%4d, %4d, %4d\n", tm[n], amp[n], aout[n]); /* 付録B参照 */
 #else
     printf("%4d,%4d\n", tm[n], aout[n]);
 #endif
