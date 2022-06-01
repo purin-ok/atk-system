@@ -4,9 +4,9 @@
 #include <string.h>
 #define BUFSIZE 80  /* 読込バッファサイズ */
 #define DATANUM 101 /* 読込データ個数 */
-#define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
+#define ROUND(x) ((x > 0) ? (x + 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
-#define TEST
+// #define TEST
 #define MOVING_AVERAGE 5
 int main(int argc, char **argv) {
   int n, i;
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
       continue;
     }
     tm[n] = atoi(strtok(buf, ","));
-    amp[n] = atoi(strtok(NULL, "\r\n\0"));
+    amp[n] = atoi(strtok(NULL, "\r\n\0")) / MOVING_AVERAGE;
     n++; /* ここに n++ がある理由を考えよ */ /*コメント文字の処理を飛ばすため*/
   }
   fclose(fp);
@@ -48,12 +48,10 @@ int main(int argc, char **argv) {
   for (n = MOVING_AVERAGE / 2; n < DATANUM - 1; n++) {
     // 5つ足して5で割った値をaoutに入れる．
     err_5add += amp[n + MOVING_AVERAGE / 2];
-    aout[n] = err_5add / MOVING_AVERAGE;
+    aout[n] = (err_5add < 0) ? 0 : ROUND(err_5add);
+    aout[n] = (err_5add > 255) ? 225 : ROUND(err_5add);
     err_5add -= amp[n - MOVING_AVERAGE / 2];
-    // printf("%d"
     /* ここで出力範囲が[0:255]になるようクリッピング処理すること */
-    if (aout[n] < 0) aout[n] = 0;
-    if (aout[n] > 255) aout[n] = 255;
   }
   for (n = MOVING_AVERAGE / 2; n < DATANUM - (MOVING_AVERAGE / 2); n++) {
 #if defined TEST
