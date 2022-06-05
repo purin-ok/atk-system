@@ -1,5 +1,6 @@
 /*
 俺は天才です
+失敗した記録
 多分負数にするときに二の補数表現を使用しているが不必要にビットを確保しているとその分まで反転させてしまい，とんでもない桁の数が出てくる．
 */
 #include <ctype.h>
@@ -8,7 +9,7 @@
 #include <string.h>
 #define ROW 16 /* Rows per page */
 #define COL 16 /* Columns per row */
-#define BIAS 0x8fff
+// #define BIAS 0x8fff
 #define H_LEN 4   /* チャンクサイズ */
 #define ID_LPCM 1 /* リニアPCMのID */
 typedef unsigned short uShort;
@@ -52,7 +53,9 @@ uLong read_head(FILE *fp, uShort *ch, uShort *qbit) {
 int main(int argc, char **argv) {
   double count;
   double tm = 0;
-  short datR, datL;
+  int datR, datL;
+  // short datR, datL;
+  // intをshortにするとまた違う間違った波形になる．これはgnuplotが負数表記にしたつもりだけど表示するときにワンちゃん不都合が出ちゃうのかな？？？？
   long start_num = 0L, end_num;
   FILE *fp;
   uLong dsize, sampling_rate;
@@ -69,7 +72,7 @@ int main(int argc, char **argv) {
 
   sampling_rate = read_head(fp, &ch, &qbit);
   if (argc > 3) {
-    start_num = atol(argv[2]) * (qbit / 8) * ch;
+    start_num = atol(argv[2]);
     fseek(fp, start_num, SEEK_CUR);
   }
   if (argc == 4) {
@@ -86,7 +89,7 @@ int main(int argc, char **argv) {
     // while ((datL = fgetc(fp)) != EOF) {      // Lデータ取得
     //   if ((datR = fgetc(fp)) == EOF) break;  // Rデータ取得
     tm += count;
-    printf("%0.3f,%4d,%4d\n", tm, datL + BIAS, datR + BIAS);
+    printf("%0.3f,%4d,%4d\n", tm, datL, datR);
     if (tm > end_num) break;
   }
   fclose(fp);
