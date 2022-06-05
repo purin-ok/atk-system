@@ -4,7 +4,7 @@
 #include <string.h>
 #define BUFSIZE 80  /* 読込バッファサイズ */
 #define DATANUM 101 /* 読込データ個数 */
-#define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
+#define ROUND(x) ((x > 0) ? (x + 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
 #define TEST
 #define MOVING_AVERAGE 5
@@ -35,18 +35,16 @@ int main(int argc, char **argv) {
       err_before[count] = err_before[count - 1];  //多分こう
       // printf("%d", err_before[count]);
     }
-    err_before[0] = ain;
+    err_before[0] = ain / MOVING_AVERAGE;
     /*必要データの保存と移動*/
-    err_5add += ain;
+    err_5add += err_before[0];
     if (n < MOVING_AVERAGE - 1) {
       n++;
       continue;
     }
-
-    aout = err_5add / MOVING_AVERAGE;
     /*平均化処理*/
-    if (aout < 0) aout = 0;
-    if (aout > 255) aout = 255;
+    aout = (err_5add < 0) ? 0 : ROUND(err_5add);
+    aout = (err_5add > 255) ? 225 : ROUND(err_5add);
 
 #if defined TEST
     printf("%4d, %4d, %4d\n", tm, ain, aout); /* 付録B参照 */
