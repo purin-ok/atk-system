@@ -7,6 +7,7 @@
 #define BUFSIZE 80                      /* 読込バッファサイズ */
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
 #define DATANUM 101                     /* 読込データ個数 */
+
 int main(int argc, char **argv) {
   int column = 2, ncolumn, add_square, a_rms_add;
   int add_n = 0, max, min, n = 0, keep_n;

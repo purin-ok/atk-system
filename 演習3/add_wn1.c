@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-//#define TEST
+#define TEST
 #define BUFSIZE 80 /* 読込バッファサイズ */
 #define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
@@ -35,7 +35,6 @@ int main(int argc, char **argv) {
     err = nmax * (2.0 * rand() / RAND_MAX - 1.0); /* 雑音生成 */
     aout = ain + ROUND(err);
     /* ここで出力範囲が[0:255]になるようクリッピング処理すること */
-    printf("%d,", aout);
     if (aout < 0) aout = 0;
     if (aout > 255) aout = 255;
 
