@@ -12,16 +12,16 @@
 #define H_LEN 4   /* チャンクサイズ */
 #define ID_LPCM 1 /* リニアPCMのID */
 #define CH 2      //ステレオに変換するからこれでいい．
-#define DT 3      //どれくらいずらすか
+#define DT 4      //どれくらいずらすか
 typedef unsigned short uShort;
 typedef unsigned long uLong;
 
 /* ファイル*fpからヘッダ情報を読み取り*ch, *qbitに値をセットして
    データサイズを戻り値とする（WAVEファイルでなければ0を戻り値とする） */
-uLong header_data(FILE *fp, FILE *fp_write, short *q_bit) {
+uLong header_data(FILE *fp, FILE *fp_write, short *q_bit, int *data_size) {
   char str[H_LEN];
   unsigned int h_len = H_LEN;
-  uLong riff_size, fmt_size, sampling_rate, data_speed, data_size;
+  uLong riff_size, fmt_size, sampling_rate, data_speed;
   uShort fid, block_size, ch;
 
   fread(str, sizeof(char), h_len, fp);
@@ -49,9 +49,9 @@ uLong header_data(FILE *fp, FILE *fp_write, short *q_bit) {
   printf("# Q bit: %d\n", *q_bit);
   fread(str, sizeof(char), h_len, fp);
   if (memcmp("data", str, h_len) != 0) return 0;
-  fread(&data_size, sizeof(uLong), 1, fp);
-  printf("# datasize: %ld\n", data_size);
-
+  fread(data_size, sizeof(uLong), 1, fp);
+  printf("# datasize: %ld\n", *data_size);
+  *data_size *= 2;
   fwrite("RIFF", sizeof(char), 4, fp_write);
   fwrite(&riff_size, sizeof(int), 1, fp_write);
   fwrite("WAVE", sizeof(char), 4, fp_write);
@@ -65,17 +65,18 @@ uLong header_data(FILE *fp, FILE *fp_write, short *q_bit) {
   fwrite(q_bit, sizeof(short), 1, fp_write);
   fwrite("data", sizeof(char), 4, fp_write);
   fwrite(&data_size, sizeof(int), 1, fp_write);
+  // *data_size /= 2;
   return sampling_rate; /* この戻り値は演習5-2で活用できるはず */
 }
 
 int main(int argc, char **argv) {
-  int dt = 10, sampling_rate, count = 0;
-  unsigned char data_dt[DT] = {0};  //ずらしてる間は0を出力する．
-  unsigned char datL, datR;
+  int sampling_rate, count = 0, data_size;
+  unsigned short data_dt[DT] = {0};  //ずらしてる間は0を出力する．
+  unsigned short datL, datR;
   uShort q_bit;
   FILE *fp;
   FILE *fp_write;
-  if (argc < 3) {
+  if (argc < 2) {
     fprintf(stderr, "Usage: %s file page\n", argv[0]);
     return EXIT_FAILURE;
   }
@@ -87,16 +88,19 @@ int main(int argc, char **argv) {
     fprintf(stderr, "File (%s) cannot open\n", argv[2]);
     return EXIT_FAILURE;
   }  //書き込み先のステレオファイル
-
-  sampling_rate = header_data(fp, fp_write, &q_bit);
+  int countp = 0;
+  sampling_rate = header_data(fp, fp_write, &q_bit, &data_size);
   while ((data_dt[0] = fgetc(fp)) != EOF) {
+    if (countp * 2 >= data_size) break;
     datL = data_dt[0];
     datR = data_dt[DT - 1];
-    fwrite(&datL, sizeof(unsigned char), 1, fp_write);
-    fwrite(&datR, sizeof(unsigned char), 1, fp_write);
+    fwrite(&datL, sizeof(unsigned short), 1, fp_write);
+    fwrite(&datR, sizeof(unsigned short), 1, fp_write);
+    // printf("%d,%d\n", datL, datR);
     for (count = 1; count < DT; count++) {
-      data_dt[count] = data_dt[count - 1];
+      data_dt[DT - count] = data_dt[DT - count - 1];
     }
+    countp++;
   }
   fclose(fp);
   fclose(fp_write);
