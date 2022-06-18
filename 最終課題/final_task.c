@@ -52,6 +52,7 @@ uLong header_data(FILE *fp, FILE *fp_write, short *q_bit, int *data_size) {
   fread(data_size, sizeof(uLong), 1, fp);
   printf("# datasize: %ld\n", *data_size);
   *data_size *= 2;
+  ch = CH;
   fwrite("RIFF", sizeof(char), 4, fp_write);
   fwrite(&riff_size, sizeof(int), 1, fp_write);
   fwrite("WAVE", sizeof(char), 4, fp_write);
@@ -64,7 +65,7 @@ uLong header_data(FILE *fp, FILE *fp_write, short *q_bit, int *data_size) {
   fwrite(&block_size, sizeof(short), 1, fp_write);
   fwrite(q_bit, sizeof(short), 1, fp_write);
   fwrite("data", sizeof(char), 4, fp_write);
-  fwrite(&data_size, sizeof(int), 1, fp_write);
+  fwrite(data_size, sizeof(int), 1, fp_write);
   // *data_size /= 2;
   return sampling_rate; /* この戻り値は演習5-2で活用できるはず */
 }
@@ -94,9 +95,9 @@ int main(int argc, char **argv) {
     if (countp * 2 >= data_size) break;
     datL = data_dt[0];
     datR = data_dt[DT - 1];
-    fwrite(&datL, sizeof(unsigned short), 1, fp_write);
-    fwrite(&datR, sizeof(unsigned short), 1, fp_write);
-    // printf("%d,%d\n", datL, datR);
+    fwrite(&datL, sizeof(unsigned char), 1, fp_write);
+    fwrite(&datR, sizeof(unsigned char), 1, fp_write);
+    printf("%d,%d\n", datL, datR);
     for (count = 1; count < DT; count++) {
       data_dt[DT - count] = data_dt[DT - count - 1];
     }

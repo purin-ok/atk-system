@@ -21,11 +21,7 @@ double saw(double r) {
 double squ(double r) {
   double square;
   square = saw(r);
-  if (r > 0) {
-    square = 1;
-  } else {
-    square = -1;
-  }
+  square = ((square > 0) ? 1 : -1);
   return square;
 }
 
