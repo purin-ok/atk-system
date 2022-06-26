@@ -6,7 +6,7 @@
 // #define TEST
 #define BUFSIZE 80  /* 読込バッファサイズ */
 #define DATANUM 101 /* 読込データ個数 */
-#define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
+#define ROUND(x) ((x > 0) ? (x + 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
 int main(int argc, char **argv) {
   int n, n_keep;

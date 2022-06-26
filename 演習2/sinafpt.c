@@ -16,7 +16,7 @@ double err_sum(double true_value, unsigned char quantization, double e_rms) {
 
 int main(int argc, char **argv) {
   int t, n = 0;
-  double amp, frq, phf, rad, vin, esum = 0, dt, phase;
+  double amp, frq, phf, rad, vin, esum = 0, dt;
   /* esumは演習2-3,phfは演習2-6で使用 */
   unsigned char vout; /* 出力用: 8ビット符号なし[0:255] */
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
   amp = atof(argv[1]);
   frq = atof(argv[2]);
-  phase = atof(argv[3]);  //単位は[ms]
+  phf = atof(argv[3]);  //単位は[ms]
   // printf("a");
   dt = atof(argv[4]);
   // printf("%d", atoi(argv[4]));
@@ -39,13 +39,13 @@ int main(int argc, char **argv) {
   printf("#N %f\n", T_END / dt + 1);
 
   for (t = 0; t <= T_END; t += dt) {
-    rad = (t + phase) / (1000 / frq) * 2 * PI;
+    rad = (t + phf) / (1000 / frq) * 2 * PI;
     vin = amp * sin(rad) + A_BIAS; /* 標本化 */
     vin += 0.5;
     vout = vin; /* 量子化・符号化 */
     if (vout < 0) vout = 0;
     if (vout > 255) vout = 255;
-    esum = err_sum(vin, vout, esum);
+    // esum = err_sum(vin, vout, esum);
     printf("%4d, %4d\n", t, vout);
   }
   return EXIT_SUCCESS;

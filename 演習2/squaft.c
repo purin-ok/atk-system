@@ -24,14 +24,8 @@ double saw(double r) {
 }
 
 double squ(double r) {
-  double square;
-  square = saw(r);
-  if (r > 0) {
-    square = 1;
-  } else {
-    square = -1;
-  }
-  return square;
+  double;
+  return ((saw(r) < 0) ? -1 : 1);
 }
 
 double err_sum(double true_value, unsigned char quantization, double e_rms) {
@@ -64,7 +58,7 @@ int main(int argc, char **argv) {
   for (t = 0; t <= T_END; t += dt) {
     rad = t / (1000 / frq) * 2 * PI;
     vin = amp * squ(rad) + A_BIAS; /* 標本化 */
-    vin += 0.5;
+    // vin += 0.5;
     vout = vin; /* 量子化・符号化 */
     if (vout < 0) vout = 0;
     if (vout > 255) vout = 255;

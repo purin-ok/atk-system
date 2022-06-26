@@ -8,6 +8,7 @@
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
 #define DT 10 /* 標本化間隔[ms] */  //ここをどうにかしていじると2-5ができる
 #define T_END 1000                  /* 計測終了時刻[ms] */
+#define ROUND(x) ((x > 0) ? (x + 0.5) : (x - 0.5))
 
 double err_sum(double true_value, unsigned char quantization, double e_rms) {
   e_rms = (true_value - quantization) * (true_value - quantization);
@@ -39,8 +40,7 @@ int main(int argc, char **argv) {
     rad = t / (1000 / frq) * 2 * PI;
     /* 時刻t[ms]を弧度に変換する式を考えること（式を必ず報告すること） */
     vin = amp * sin(rad) + A_BIAS; /* 標本化 */
-    vin += 0.5;
-    vout = vin; /* 量子化・符号化 */
+    vout = ROUND(vin);             /* 量子化・符号化 */
     if (vout < 0) vout = 0;
     if (vout > 255) vout = 255;
     esum = err_sum(vin, vout, esum);

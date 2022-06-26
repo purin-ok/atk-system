@@ -10,7 +10,7 @@
 #define MOVING_AVERAGE 5
 int main(int argc, char **argv) {
   int tm, ain, aout, nmax, n = 0;
-  double err_5add = 0.0, err_2before, err_1before, now;
+  double err_5add = 0.0, now;
   char buf[BUFSIZE];
   int err_before[MOVING_AVERAGE];
   FILE *fp;

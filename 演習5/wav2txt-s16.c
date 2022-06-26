@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
     // while ((datL = fgetc(fp)) != EOF) {      // Lデータ取得
     //   if ((datR = fgetc(fp)) == EOF) break;  // Rデータ取得
     tm += count;
-    printf("%0.3f,%4d,%4d\n", tm, datL + BIAS, datR + BIAS);
+    printf("%0.3f,%4d,%4d\n", tm, datL, datR);
     if (tm > end_num) break;
   }
   fclose(fp);
