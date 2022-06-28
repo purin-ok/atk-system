@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
     vin = amp * sin(rad) + A_BIAS; /* 標本化 */
 
     vout = vin; /* 量子化・符号化 */
-    if (vout < 0) vout = 0;
-    if (vout > 255) vout = 255;
+    if (vin < 0) vout = 0;
+    if (vin > 255) vout = 255;
     esum = err_sum(vin, vout, esum);
     printf("%4d, %4d\n", t, vout);
     // printf("%f", e_rms);

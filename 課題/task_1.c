@@ -3,13 +3,13 @@
 #include <stdlib.h>
 
 #include "pi.h"
-
-#define BUFSIZE 80 /* 読込バッファサイズ */
+#define T_END 1000
+#define DT 10
 #define A_BIAS 0x80
+#define FRQ 5
 int main(int argc, char *argv[]) {
-  int count, amp;
-  double k, m, rad, f_1, dif;
-  FILE *fp;
+  int count, amp, m;
+  double k, rad, f_1, dif;
   if (argc < 3) {
     fprintf(stderr, "Usage: %s infile max_noise\n", argv[0]);
     return EXIT_FAILURE;
@@ -17,16 +17,15 @@ int main(int argc, char *argv[]) {
 
   amp = atoi(argv[1]);
 
-  if (m > 0) m = atoi(argv[2]);
-  dif = PI / 180.0;
-  for (rad = 0; rad < 2 * PI; rad += dif) {
+  m = atoi(argv[2]);
+  for (int t = 0; t <= T_END; t += DT) {
+    rad = t * FRQ * 2 * PI / 1000;
     f_1 = 0;
-    for (count = 1; count < m; count++) {
+    for (count = 1; count <= m; count++) {
       f_1 += sin(count * rad) / count;
     }
     f_1 = 2 / PI * amp * f_1 + A_BIAS;
-    printf("%f,%f\n", rad, f_1);
+    printf("%4d,%4d\n", t, (int)f_1);
   }
-  fclose(fp);
   return EXIT_SUCCESS;
 }

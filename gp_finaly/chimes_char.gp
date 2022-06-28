@@ -1,14 +1,14 @@
 set terminal postscript eps monochrome
-set output '../epsff/chimes.eps'
+set output '../epsff/chimes_char.eps'
 # set size nosquare 1,0.75
- set xrange [0:631]
-  set xlabel 'Time[ms]'
+#  set xrange [0:631]
+ set xlabel 'Time[ms]'
  set ylabel 'Amplitude'
 #  set yrange [-1.1:255.1]
 set xzeroaxis lt 1 lw 1
 set style line 2 lt 2 lw 1 pt 5
 set datafile separator ","
 # set term wxt
-plot '../演習5/chimes_tmp.csv' u 1:2 t "chimesL" w l ls 1 , '../演習5/chimes_tmp.csv' u 1:3 t "chimesR" w l ls 1 dt 3 
+plot '../演習5/chimes_char.csv' u 1:2 t "chimesL" w l ls 1 , '../演習5/chimes_char.csv' u 1:3 t "chimesR" w l ls 1 dt 3 
 set output
 reset
