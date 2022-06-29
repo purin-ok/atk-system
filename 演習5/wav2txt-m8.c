@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
     end_num = atoi(argv[3]);
   }
   tm = (double)start_num / sampling_rate * 1000.0;
-  printf("%f", tm);
+  // printf("%f", tm);
   count = 1000.0 / sampling_rate;
   while ((dat = fgetc(fp)) != EOF) {
     if (count > end_num) break;

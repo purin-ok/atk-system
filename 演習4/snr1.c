@@ -4,7 +4,7 @@
 #include <string.h>
 #define BUFSIZE 80                      /* 読込バッファサイズ */
 #define A_BIAS 0x80 /* 直流バイアス */  // 100 3のときは0x80,140 3のときは0xf0
-#define DATANUM 101                     /* 読込データ個数 */
+#define DATANUM 1001                    /* 読込データ個数 */
 int main(int argc, char **argv) {
   int tm[DATANUM], amp[DATANUM] = {0}, aerr[DATANUM] = {0};
   int column = 2, ncolumn, n = 0;

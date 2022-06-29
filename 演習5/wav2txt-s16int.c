@@ -53,8 +53,8 @@ uLong read_head(FILE *fp, uShort *ch, uShort *qbit) {
 int main(int argc, char **argv) {
   double count;
   double tm = 0;
-  int datR, datL;
-  // short datR, datL;
+  int datR = 0, datL = 0;
+  // uShort datR, datL;
   // intをshortにするとまた違う間違った波形になる．これはgnuplotが負数表記にしたつもりだけど表示するときにワンちゃん不都合が出ちゃうのかな？？？？
   long start_num = 0L, end_num;
   FILE *fp;
@@ -89,8 +89,10 @@ int main(int argc, char **argv) {
     // while ((datL = fgetc(fp)) != EOF) {      // Lデータ取得
     //   if ((datR = fgetc(fp)) == EOF) break;  // Rデータ取得
     tm += count;
-    printf("%0.3f,%4d,%4d\n", tm, datL, datR);
+    printf("%0.3f,%5x,%5x\n", tm, datL, datR);
     if (tm > end_num) break;
+    datL = 0;
+    datR = 0;
   }
   fclose(fp);
   return EXIT_SUCCESS;

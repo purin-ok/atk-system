@@ -4,9 +4,9 @@
 
 #include "pi.h"
 #define T_END 1000
-#define DT 10
+#define DT 1
 #define A_BIAS 0x80
-#define FRQ 5
+#define FRQ 3
 int main(int argc, char *argv[]) {
   int count, amp, m;
   double k, rad, f_1, dif;
