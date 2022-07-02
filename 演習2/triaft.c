@@ -85,10 +85,7 @@ int main(int argc, char **argv) {
   for (t = 0; t <= T_END; t += dt) {
     rad = t / (1000 / frq) * 2 * PI;
     vin = amp * tri(rad) + A_BIAS; /* 標本化 */
-    vin += 0.5;
-    vout = vin; /* 量子化・符号化 */
-    if (vout < 0) vout = 0;
-    if (vout > 255) vout = 255;
+    vout = (vin < 0) ? 0 : ((vin > 255) ? 225 : ROUND(vin));
     // esum = err_sum(vin, vout, esum);
     printf("%4f, %4d\n", t, vout);
   }

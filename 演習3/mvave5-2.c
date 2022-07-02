@@ -48,8 +48,7 @@ int main(int argc, char **argv) {
   for (n = MOVING_AVERAGE / 2; n < DATANUM - 1; n++) {
     // 5つ足して5で割った値をaoutに入れる．
     err_5add += amp[n + MOVING_AVERAGE / 2];
-    aout[n] = (err_5add < 0) ? 0 : ROUND(err_5add);
-    aout[n] = (err_5add > 255) ? 225 : ROUND(err_5add);
+    aout[n] = (err_5add < 0) ? 0 : (err_5add > 255) ? 225 : ROUND(err_5add);
     err_5add -= amp[n - MOVING_AVERAGE / 2];
     /* ここで出力範囲が[0:255]になるようクリッピング処理すること */
   }
