@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+// #define TEST
 #define BUFSIZE 80  /* 読込バッファサイズ */
 #define DATANUM 101 /* 読込データ個数 */
-#define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
+#define ROUND(x) ((x > 0) ? (x + 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
 int main(int argc, char **argv) {
-  int n;
+  int n, n_keep;
   int tm[DATANUM], amp[DATANUM], aout[DATANUM];
   /* 引数のチェックとargv[1]で指定されたファイルを開く処理を書くこと */
   int nmax;
@@ -24,6 +26,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "File: %s cannot open\n", argv[1]);
     return EXIT_FAILURE;
   }
+
   for (n = 0; n < DATANUM;) { /* ここに　n++ がない理由を考えよ */
     //ここにあると，二個目のif文のcontinue処理をした場合に，n+1されてしまい，配列にうまく読み込めない
     if (fgets(buf, sizeof(buf), fp) == NULL) break;
@@ -37,6 +40,10 @@ int main(int argc, char **argv) {
   }
   fclose(fp);
   /* 時刻,振幅を配列t,ampに読込完了, これ以降で信号処理を行う */
+  n_keep = n;
+  nmax = atoi(argv[2]); /* 白色雑音の最大振幅を設定 */
+  printf("# WN %d\n", nmax);
+  srand((unsigned)time(NULL));
   for (n = 0; n < DATANUM; n++) {
     err = nmax * (2.0 * rand() / RAND_MAX - 1.0); /* 雑音生成 */
     aout[n] = amp[n] + ROUND(err);
@@ -44,11 +51,11 @@ int main(int argc, char **argv) {
     if (aout[n] < 0) aout[n] = 0;
     if (aout[n] > 255) aout[n] = 255;
   }
-  for (n = 0; n < DATANUM; n++) {
+  for (n = 0; n < n_keep; n++) {
 #if defined TEST
-    printf("%4d, %4d, %4d\n", tm, amp[n], aout[n]); /* 付録B参照 */
+    printf("%4d, %4d, %4d\n", tm[n], amp[n], aout[n]); /* 付録B参照 */
 #else
-    printf("%4d,%4d\n", tm, aout[n]);
+    printf("%4d,%4d\n", tm[n], aout[n]);
 #endif
   }
   return EXIT_SUCCESS;

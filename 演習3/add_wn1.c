@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-//#define TEST
+#define TEST
 #define BUFSIZE 80 /* 読込バッファサイズ */
 #define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */

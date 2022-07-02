@@ -1,31 +1,32 @@
-/* sinï¿½gï¿½ï¿½CSVï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½ï¿½ */
+/* sin?¿½g?¿½?¿½CSV?¿½f?¿½[?¿½^?¿½?¿½?¿½?¿½ */
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include "pi.h" /* ï¿½tï¿½^Bï¿½Qï¿½ï¿½ */
-//ï¿½ï¿½ï¿½K1ï¿½|1
-double rad(double r){
-	double mod;
-	mod = fmod(r,2*PI);
-	if(r<0)mod = mod+2*PI;
-return mod;
+
+#include "pi.h"
+//?¿½?¿½?¿½K1?¿½|1
+double rad(double r) {
+  double mod;
+  mod = fmod(r, 2 * PI);
+  if (r < 0) mod = mod + 2 * PI;
+  return mod;
 }
 
-//ï¿½ï¿½ï¿½K1ï¿½|2
-double saw(double e){
-    double saw_blead;
-    saw_blead = 1 - rad(e) / PI;
-return saw_blead;
+//?¿½?¿½?¿½K1?¿½|2
+double saw(double e) {
+  double saw_blead;
+  saw_blead = 1 - rad(e) / PI;
+  return saw_blead;
 }
 
 int main(void) {
-    double amp,dif,pi2,radi;
+  double amp, dif, pi2, radi;
 
-    pi2 = 2*PI;
-    dif = PI/180.0;
-    for (radi = 0; radi <= 2*pi2; radi += dif) {
-        amp = saw(radi);
-        printf("%6.3f, %6.3f\n", radi, amp);
-    }
-    return EXIT_SUCCESS;
+  pi2 = 2 * PI;
+  dif = PI / 180.0;
+  for (radi = -2 * pi2; radi <= 2 * pi2; radi += dif) {
+    amp = saw(radi);
+    printf("%6.3f, %6.3f\n", radi, amp);
+  }
+  return EXIT_SUCCESS;
 }

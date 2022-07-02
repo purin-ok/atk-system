@@ -6,7 +6,7 @@
 #define DATANUM 101 /* 読込データ個数 */
 #define ROUND(x) ((x > 0) ? (x * 0.5) : (x - 0.5))
 /* 四捨五入マクロ(付録B参照) */
-//#define TEST
+#define TEST
 #define MOVING_AVERAGE 3
 int main(int argc, char **argv) {
   int n, i;
@@ -53,11 +53,11 @@ int main(int argc, char **argv) {
     if (aout[n] < 0) aout[n] = 0;
     if (aout[n] > 255) aout[n] = 255;
   }
-  for (n = 0; n < DATANUM; n++) {
+  for (n = 1; n < DATANUM - 1; n++) {
 #if defined TEST
-    printf("%4d, %4d, %4d\n", tm, amp[n], aout[n]); /* 付録B参照 */
+    printf("%4d, %4d, %4d\n", tm[n], amp[n], aout[n]); /* 付録B参照 */
 #else
-    printf("%4d,%4d\n", tm, aout[n]);
+    printf("%4d,%4d\n", tm[n], aout[n]);
 #endif
   }
   return EXIT_SUCCESS;
